@@ -12,6 +12,7 @@ Use at your own risk!
 * Day 4,800 deactivation
 * Auto Subscribe
 * Code Injection / Sideload via u.json (RickRoll)
+* Removed user blacklist and hardstop in case no backlist was found
 * Moved the update check and distribution to a secure site (eRepublik.tools)
 
 ## How to contribute
