@@ -85,7 +85,7 @@
             function assumption_initializeScript() {
                 fetchUrlAndReturnContentRawOrAsJson("//download.erepublik.tools/erepstuff/version.json", function (response) {
                     Object.assign(localStorageSettings, response);
-                    C();
+                    updateLicenceString();
                     compareScriptVersionWithExternalVersionAndShowUpdateNotification();
                     saveSettingsAsStringInLocalStorage();
                 })
@@ -101,14 +101,20 @@
                 getElementsBySelectorAndApplyCallbackOnThem("#NoKills", e => e.remove());
             }
 
-            function u(e, t) {
-                ue[e] ? setTimeout(t) : fetchUrlAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/marketpicture/" + e, function (n) {
-                    ue[e] = n, t()
+            function updateMarketPictureCachePerCountryIdAndCallHandler(country_id, handler) {
+                cacheMarketPicturePerCountryId[country_id] ? setTimeout(handler) : fetchUrlAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/marketpicture/" + country_id, function (response) {
+                    cacheMarketPicturePerCountryId[country_id] = response;
+                    handler();
                 })
             }
 
-            function getIndustryNameFromIndustryId(e) {
-                return 1 == e ? "food" : 2 == e ? "weapons" : 3 == e ? "tickets" : 4 == e ? "houses" : 7 == e ? "frm" : 12 == e ? "wrm" : 17 == e ? "hrm" : 23 == e ? "aircraft" : "arm"
+            /**
+             *
+             * @param industryId {number}
+             * @returns {string}
+             */
+            function getIndustryNameFromIndustryId(industryId) {
+                return 1 == industryId ? "food" : 2 == industryId ? "weapons" : 3 == industryId ? "tickets" : 4 == industryId ? "houses" : 7 == industryId ? "frm" : 12 == industryId ? "wrm" : 17 == industryId ? "hrm" : 23 == industryId ? "aircraft" : "arm"
             }
 
             function g(t, n) {
@@ -186,8 +192,8 @@
                     o = t[0] == LOCAL_CIITIZEN_DATA.country ? LOCAL_CIITIZEN_DATA.countryLocationId : LOCAL_CIITIZEN_DATA.country,
                     a = document.getElementById("erepDE"),
                     r = document.querySelector("#marketplace h1");
-                a ? a.href = "//erepublik.tools/en/marketplace/items/0/" + t[1] + "/" + t[2] + "/offers" : (insertCSSStyles("#otherMarket,#otherMarket span{padding:0 4px;border-radius:2px;float:right}#otherMarket{background:#83b70b;color:#fff;cursor:pointer;text-shadow:0 0 2px #000}#otherMarket:hover{background:#fb7e3d}#otherMarket span{background:#fb7e3d;margin:0 -4px 0 4px}#erepDE{color:#83b70b;float:right;margin:0 70px 0 10px}#erepDE:hover{color:#fb7e3d}#erepDE span{color:#42a5f5}.costperUse{font-size:11px}.travelToMarket{position:absolute;top:1px;right:10px}"), r && r.insertAdjacentHTML("beforeEnd", '<a id="erepDE" href="//erepublik.tools/en/marketplace/items/0/' + t[1] + "/" + t[2] + '/offers">eRepublik<span>.tools</span></a>')), e.settings.isSharedOffer ? getElementsBySelectorAndApplyCallbackOnThem(".list_products", e => e.insertAdjacentHTML("afterEnd", '<a href="/' + PLATFORM_LANGUAGE_CODE + "/economy/marketplace#" + t[0] + "/" + t[1] + "/" + t[2] + '" class="std_global_btn smallSize blueColor" style="top:15px;left:420px">Show all offers</a>')) : LOCAL_CIITIZEN_DATA.countryLocationId == LOCAL_CIITIZEN_DATA.country && t[0] == LOCAL_CIITIZEN_DATA.country || u(o, function () {
-                    var e = (((ue[o][getIndustryNameFromIndustryId(t[1])] || {})["q" + t[2]] || [])[0] || {}).gross;
+                a ? a.href = "//erepublik.tools/en/marketplace/items/0/" + t[1] + "/" + t[2] + "/offers" : (insertCSSStyles("#otherMarket,#otherMarket span{padding:0 4px;border-radius:2px;float:right}#otherMarket{background:#83b70b;color:#fff;cursor:pointer;text-shadow:0 0 2px #000}#otherMarket:hover{background:#fb7e3d}#otherMarket span{background:#fb7e3d;margin:0 -4px 0 4px}#erepDE{color:#83b70b;float:right;margin:0 70px 0 10px}#erepDE:hover{color:#fb7e3d}#erepDE span{color:#42a5f5}.costperUse{font-size:11px}.travelToMarket{position:absolute;top:1px;right:10px}"), r && r.insertAdjacentHTML("beforeEnd", '<a id="erepDE" href="//erepublik.tools/en/marketplace/items/0/' + t[1] + "/" + t[2] + '/offers">eRepublik<span>.tools</span></a>')), e.settings.isSharedOffer ? getElementsBySelectorAndApplyCallbackOnThem(".list_products", e => e.insertAdjacentHTML("afterEnd", '<a href="/' + PLATFORM_LANGUAGE_CODE + "/economy/marketplace#" + t[0] + "/" + t[1] + "/" + t[2] + '" class="std_global_btn smallSize blueColor" style="top:15px;left:420px">Show all offers</a>')) : LOCAL_CIITIZEN_DATA.countryLocationId == LOCAL_CIITIZEN_DATA.country && t[0] == LOCAL_CIITIZEN_DATA.country || updateMarketPictureCachePerCountryIdAndCallHandler(o, function () {
+                    var e = (((cacheMarketPicturePerCountryId[o][getIndustryNameFromIndustryId(t[1])] || {})["q" + t[2]] || [])[0] || {}).gross;
                     r && r.insertAdjacentHTML("beforeEnd", '<a id="otherMarket">' + EREPUBLIK_VARIABLE.info.countries[o].name + "<span>" + (e ? e.toFixed(2) + LOCAL_CIITIZEN_DATA.currency : "No offers") + "</span></a>"), document.getElementById("otherMarket").addEventListener("click", () => getElementsBySelectorAndApplyCallbackOnThem("#countryId", function (e) {
                         e.value = o, e.dispatchEvent(new Event("change"))
                     }))
@@ -223,7 +229,7 @@
                 })
             }
 
-            function C() {
+            function updateLicenceString() {
                 getElementsBySelectorAndApplyCallbackOnThem(".stuffBtn+.stuffBtn span,#AF_l", (element, method) => element.textContent = method ? "License: FREE" : "FREE".split(" ")[0])
             }
 
@@ -235,22 +241,31 @@
                 })
             }
 
-            function travelToBattlefieldByBattleIdAndZoneId(e, t, n, i) {
-                var o = {
+            function travelToBattlefieldByBattleIdAndZoneId(battleId, battleZoneId, n, i) {
+                var body = {
                     _token: csrfToken,
-                    battleId: e,
-                    battleZoneId: t
+                    battleId: battleId,
+                    battleZoneId: battleZoneId
                 };
-                n && (o.sideCountryId = n), fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/battlefieldTravel", o, () => i ? 0 : location.href = "/" + PLATFORM_LANGUAGE_CODE + "/military/battlefield/" + e)
+                n && (body.sideCountryId = n), fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/battlefieldTravel", body, () => i ? 0 : location.href = "/" + PLATFORM_LANGUAGE_CODE + "/military/battlefield/" + battleId)
             }
 
             function R(e, t) {
-                var n = t ? +e.damage.replace(/,/g, "") : e.bomb ? e.bomb.damage : e.oldEnemy.isNatural ? Math.floor(1.1 * e.user.givenDamage) : e.user.givenDamage,
-                    i = t ? +e.rewards.prestigePoints.replace(/,/g, "") : e.hits || 1,
-                    a = t ? +e.kills.replace(/,/g, "") : 1;
-                assumption_dailyBattleStats[0] += a, assumption_dailyBattleStats[1] += i, assumption_dailyBattleStats[SERVER_DATA.onAirforceBattlefield ? 3 : 2] += n, localStorage.statsToday = JSON.stringify(assumption_dailyBattleStats), personal_stats.forEach(function (e, t) {
-                    savedStats[t] = +savedStats[t] + (t ? t < 2 ? i : n : a), e.textContent = reformatNumberStringToDelimitedNumber(savedStats[t])
-                }), document.cookie = SERVER_DATA.battleZoneId + "-" + SERVER_DATA.leftBattleId + "=" + savedStats.join("|") + ";max-age=7200;Secure;SameSite=Strict", v(), window.mercenaryEl && (mercenaryEl.textContent = Math.min(+mercenaryEl.textContent + a, 25)), window.freedomFighterEl && (freedomFighterEl.textContent = Math.min(+freedomFighterEl.textContent + a, 75))
+                var damage = t ? +e.damage.replace(/,/g, "") : e.bomb ? e.bomb.damage : e.oldEnemy.isNatural ? Math.floor(1.1 * e.user.givenDamage) : e.user.givenDamage,
+                    prestigePoints = t ? +e.rewards.prestigePoints.replace(/,/g, "") : e.hits || 1,
+                    kills = t ? +e.kills.replace(/,/g, "") : 1;
+                assumption_dailyBattleStats[0] += kills;
+                assumption_dailyBattleStats[1] += prestigePoints;
+                assumption_dailyBattleStats[SERVER_DATA.onAirforceBattlefield ? 3 : 2] += damage;
+                localStorage.statsToday = JSON.stringify(assumption_dailyBattleStats);
+                personal_stats.forEach(function (e, t) {
+                    savedStats[t] = +savedStats[t] + (t ? t < 2 ? prestigePoints : damage : kills);
+                    e.textContent = reformatNumberStringToDelimitedNumber(savedStats[t]);
+                });
+                document.cookie = SERVER_DATA.battleZoneId + "-" + SERVER_DATA.leftBattleId + "=" + savedStats.join("|") + ";max-age=7200;Secure;SameSite=Strict";
+                v();
+                window.mercenaryEl && (mercenaryEl.textContent = Math.min(+mercenaryEl.textContent + kills, 25));
+                window.freedomFighterEl && (freedomFighterEl.textContent = Math.min(+freedomFighterEl.textContent + kills, 75))
             }
 
             function B() {
@@ -418,7 +433,7 @@
             var CURRENT_INGAME_DAY = EREPUBLIK_VARIABLE.settings.eDay || localStorageSettings.update || 0,
                 de = document.getElementsByClassName("lvl")[0],
                 pe = document.getElementById("foodResetHours"),
-                ue = {};
+                cacheMarketPicturePerCountryId = {};
             if (CURRENT_INGAME_DAY && localStorageSettings.update != CURRENT_INGAME_DAY && (localStorageSettings.update = CURRENT_INGAME_DAY, assumption_initializeDailyBattleStats(), saveSettingsAsStringInLocalStorage(), assumption_initializeScript(), localStorage.wamCompaniesLeftToday = JSON.stringify(Y), localStorage.wamAttempt = "0"), 1)
 
                 if (SERVER_DATA.sessionValidation) setTimeout(assumption_solveBattleCaptcha, 5e3);
@@ -469,7 +484,7 @@
                             s(e, "e"), e.addEventListener("click", function () {
                                 location.href = "/A/u/t/o/F/i/g/h/t/e/r"
                             })
-                        }), C()
+                        }), updateLicenceString()
                     }()) {
                         if (LOCAL_CIITIZEN_DATA.currentExperiencePoints && window.reset_health_to_recover && (localStorageSettings.energyRecovery || function () {
                             function e() {
@@ -774,9 +789,9 @@
                                         localStorageSettings.infCalc.selWep[n] = Math.min(this.value, 7), saveSettingsAsStringInLocalStorage(), e()
                                     })
                                 }));
-                                e(), getElementsBySelectorAndApplyCallbackOnThem("#InfCalc_hits,#InfCalc_legend,#InfCalc_booster", t => t.addEventListener("keyup", e)), getElementsBySelectorAndApplyCallbackOnThem("#InfCalc_NE,#InfCalc_WarStash", t => t.addEventListener("change", e)), localStorageSettings.infCalc.date != CURRENT_INGAME_DAY && u(35, function () {
+                                e(), getElementsBySelectorAndApplyCallbackOnThem("#InfCalc_hits,#InfCalc_legend,#InfCalc_booster", t => t.addEventListener("keyup", e)), getElementsBySelectorAndApplyCallbackOnThem("#InfCalc_NE,#InfCalc_WarStash", t => t.addEventListener("change", e)), localStorageSettings.infCalc.date != CURRENT_INGAME_DAY && updateMarketPictureCachePerCountryIdAndCallHandler(35, function () {
                                     for (var t = 1; t < 4; t++)
-                                        for (var n = 1; n < 8; n++) localStorageSettings.infCalc[t < 3 ? t : 23][n] = ((ue[35][getIndustryNameFromIndustryId(t < 3 ? t : 23)]["q" + n] || [])[1] || {}).gross / (1 == t ? 2 * (n < 7 ? n : 10) : 1);
+                                        for (var n = 1; n < 8; n++) localStorageSettings.infCalc[t < 3 ? t : 23][n] = ((cacheMarketPicturePerCountryId[35][getIndustryNameFromIndustryId(t < 3 ? t : 23)]["q" + n] || [])[1] || {}).gross / (1 == t ? 2 * (n < 7 ? n : 10) : 1);
                                     localStorageSettings.infCalc.cheapestFood = Math.min(999, ...Object.values(localStorageSettings.infCalc[1])), localStorageSettings.infCalc.date = CURRENT_INGAME_DAY, localStorageSettings.infCalc.noData = 0, saveSettingsAsStringInLocalStorage(), e()
                                 })
                             }())
