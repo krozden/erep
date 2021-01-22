@@ -18,3 +18,7 @@ Use at your own risk!
 ## How to contribute
 
 We are open to pull requests. Right now we will only accept pull requests which deobfuscate the code. We won't accept pull requests which add new features as long as huge parts of the script aren't maintainable.
+
+## Script download
+
+You'll find the latest version of this script right here: http://download.erepublik.tools/erepstuff/erepstuff.user.js
