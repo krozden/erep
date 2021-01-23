@@ -145,20 +145,20 @@
                 }()
             }
 
-            function v() {
+            function recalculateXpLeftToLevelUpAndUpdateFrontentDisplay() {
                 getElementsBySelectorAndApplyCallbackOnThem("#xpleft span", function (element) {
                     var t = 5e3 - LOCAL_CIITIZEN_DATA.currentExperiencePoints % 5e3;
-                    element.textContent = t,
-                        element.style.background = t > 500 ? "#6ebce5" : "#FB7E3D"
+                    element.textContent = t;
+                    element.style.background = t > 500 ? "#6ebce5" : "#FB7E3D"
                 })
             }
 
             function y(e, t, n, i, o) {
-                var a = {
+                var body = {
                     _token: csrfToken,
                     battleId: n || 0
                 };
-                e && (a.toCountryId = e), t && (a.inRegionId = t), i && (a.sideCountryId = i), fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/travel/", a, function () {
+                e && (body.toCountryId = e), t && (body.inRegionId = t), i && (body.sideCountryId = i), fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/travel/", body, function () {
                     o ? o() : location.reload()
                 })
             }
@@ -219,7 +219,8 @@
             }
 
             function S(e, t) {
-                insertCSSStyles("#erepDE{color:#83b70b;float:right;margin:0 20px}#erepDE:hover{color:#fb7e3d}#erepDE span{color:#42a5f5}"), getElementsBySelectorAndApplyCallbackOnThem(e + " h1", e => e.insertAdjacentHTML("beforeEnd", '<a id="erepDE" href="//erepublik.tools/en/marketplace/' + t + '">eRepublik<span>.tools</span></a>'))
+                insertCSSStyles("#erepDE{color:#83b70b;float:right;margin:0 20px}#erepDE:hover{color:#fb7e3d}#erepDE span{color:#42a5f5}");
+                getElementsBySelectorAndApplyCallbackOnThem(e + " h1", e => e.insertAdjacentHTML("beforeEnd", '<a id="erepDE" href="//erepublik.tools/en/marketplace/' + t + '">eRepublik<span>.tools</span></a>'));
             }
 
             function I() {
@@ -234,20 +235,18 @@
             }
 
             function compareScriptVersionWithExternalVersionAndShowUpdateNotification() {
-                console.log(localStorageSettings.version);
-                console.log(GM_info.script.version);
                 localStorageSettings.version && localStorageSettings.version != GM_info.script.version && getElementsBySelectorAndApplyCallbackOnThem(".stuffBtn,#stuffOptions>:nth-child(1) a:nth-child(3)", function (e, t) {
                     e.style.background = "#F95555", t || (e.childNodes[0].nodeValue = "CLICK TO UPDATE")
                 })
             }
 
-            function travelToBattlefieldByBattleIdAndZoneId(battleId, battleZoneId, n, i) {
+            function travelToBattlefieldByBattleIdAndZoneId(battleId, battleZoneId, countryId, i) {
                 var body = {
                     _token: csrfToken,
                     battleId: battleId,
                     battleZoneId: battleZoneId
                 };
-                n && (body.sideCountryId = n), fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/battlefieldTravel", body, () => i ? 0 : location.href = "/" + PLATFORM_LANGUAGE_CODE + "/military/battlefield/" + battleId)
+                countryId && (body.sideCountryId = countryId), fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/battlefieldTravel", body, () => i ? 0 : location.href = "/" + PLATFORM_LANGUAGE_CODE + "/military/battlefield/" + battleId)
             }
 
             function R(e, t) {
@@ -263,7 +262,7 @@
                     e.textContent = reformatNumberStringToDelimitedNumber(savedStats[t]);
                 });
                 document.cookie = SERVER_DATA.battleZoneId + "-" + SERVER_DATA.leftBattleId + "=" + savedStats.join("|") + ";max-age=7200;Secure;SameSite=Strict";
-                v();
+                recalculateXpLeftToLevelUpAndUpdateFrontentDisplay();
                 window.mercenaryEl && (mercenaryEl.textContent = Math.min(+mercenaryEl.textContent + kills, 25));
                 window.freedomFighterEl && (freedomFighterEl.textContent = Math.min(+freedomFighterEl.textContent + kills, 75))
             }
@@ -300,15 +299,19 @@
             }
 
             function D() {
-                function e(t) {
-                    fetchUrlAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/citizen-friends/" + LOCAL_CITIZEN_ID + "/" + t + "/list", function (n) {
+                function assumption_deleteDeadFriendsFromFriendsListHandler(friendListPage) {
+                    fetchUrlAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/citizen-friends/" + LOCAL_CITIZEN_ID + "/" + friendListPage + "/list", function (n) {
                         (new DOMParser).parseFromString(n.content, "text/html").querySelectorAll(".dead").forEach(function (e) {
                             var t = e.id.split("_")[1];
-                            a.includes(t) || a.push(t)
-                        }), d[0].textContent = "Scanning... " + (t / c * 100).toFixed(1) + "%", t < c ? e(t + 1) : function e() {
-                            a.length ? (d[0].textContent = "Removing... " + a.length + " left", fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/citizen-friends/" + a.pop() + "/1/remove?_token=" + csrfToken, {}, function () {
-                                s.textContent = s.textContent.replace(/\d+/, +s.textContent.match(/\d+/)[0] - 1), e()
-                            })) : (d[0].textContent = "Done!", d[0].style.background = "#83B70B")
+                            assumption_deadFriendsList.includes(t) || assumption_deadFriendsList.push(t)
+                        });
+                        removeDeadFriendsElement[0].textContent = "Scanning... " + (friendListPage / c * 100).toFixed(1) + "%";
+                        friendListPage < c ? assumption_deleteDeadFriendsFromFriendsListHandler(friendListPage + 1) : function assumption_removeDeadFriend() {
+                            assumption_deadFriendsList.length ? (removeDeadFriendsElement[0].textContent = "Removing... " + assumption_deadFriendsList.length + " left",
+                                fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/citizen-friends/" + assumption_deadFriendsList.pop() + "/1/remove?_token=" + csrfToken, {}, function () {
+                                    s.textContent = s.textContent.replace(/\d+/, +s.textContent.match(/\d+/)[0] - 1);
+                                    assumption_removeDeadFriend();
+                                })) : (removeDeadFriendsElement[0].textContent = "Done!", removeDeadFriendsElement[0].style.background = "#83B70B")
                         }()
                     })
                 }
@@ -323,12 +326,14 @@
                     getElementsBySelectorAndApplyCallbackOnThem(".citizen_activity", function (e) {
                         e.style.padding = 0, e.insertAdjacentHTML("beforeEnd", '<div id="removeDead">Remove dead friends</div>')
                     });
-                    var a = [],
+                    var assumption_deadFriendsList = [],
                         s = document.querySelector(".friends_title a"),
                         c = Math.ceil(s.textContent.match(/\d+/)[0] / 20);
                     getElementsBySelectorAndApplyCallbackOnThem(".view_friends", e => e.remove());
-                    var d = getElementsBySelectorAndApplyCallbackOnThem("#removeDead", t => t.addEventListener("click", function () {
-                        a = [], e(1), t.style.background = "#FB7E3D"
+                    var removeDeadFriendsElement = getElementsBySelectorAndApplyCallbackOnThem("#removeDead", t => t.addEventListener("click", function () {
+                        assumption_deadFriendsList = [];
+                        assumption_deleteDeadFriendsFromFriendsListHandler(1);
+                        t.style.background = "#FB7E3D";
                     }))
                 } else getElementsBySelectorAndApplyCallbackOnThem("#donate_to_friend div", e => e.remove())
             }
@@ -511,7 +516,7 @@
                             }), getElementsBySelectorAndApplyCallbackOnThem("#DailyConsumtionTrigger", e => e.style.display = "none")), getElementsBySelectorAndApplyCallbackOnThem("#fight_btn", t => t.addEventListener("click", function () {
                                 clearInterval(a), a = setInterval(e, 3e3)
                             }))
-                        }(), localStorageSettings.xpLeft || (insertCSSStyles("#xpleft{font-size:10px;top:" + (de ? "32px;right:769px;position:absolute" : "14px;color:#777;float:right;position:relative") + "}#xpleft span{padding:1px;color:#fff;border-radius:2px}"), getElementsBySelectorAndApplyCallbackOnThem(de ? ".profileDetails" : ".user_level", e => e.insertAdjacentHTML("beforeEnd", '<div id="xpleft">XP left: <span></span></div>')), de && (getElementsBySelectorAndApplyCallbackOnThem("#DailyConsumtionTrigger", e => e.style.visibility = "hidden"), getElementsBySelectorAndApplyCallbackOnThem(".energyTooltip", e => e.style.top = "42px"), de.style.top = "30px"), v()), localStorageSettings.maxEnergy || function () {
+                        }(), localStorageSettings.xpLeft || (insertCSSStyles("#xpleft{font-size:10px;top:" + (de ? "32px;right:769px;position:absolute" : "14px;color:#777;float:right;position:relative") + "}#xpleft span{padding:1px;color:#fff;border-radius:2px}"), getElementsBySelectorAndApplyCallbackOnThem(de ? ".profileDetails" : ".user_level", e => e.insertAdjacentHTML("beforeEnd", '<div id="xpleft">XP left: <span></span></div>')), de && (getElementsBySelectorAndApplyCallbackOnThem("#DailyConsumtionTrigger", e => e.style.visibility = "hidden"), getElementsBySelectorAndApplyCallbackOnThem(".energyTooltip", e => e.style.top = "42px"), de.style.top = "30px"), recalculateXpLeftToLevelUpAndUpdateFrontentDisplay()), localStorageSettings.maxEnergy || function () {
                             insertCSSStyles(".health_bar strong#maxRecover{line-height:14px;text-align:right;background:none;float:right;right:2px;" + (de ? "position:absolute;z-index:4;font-size:9px;text-shadow:0 0 5px rgba(0,0,0,.85);font-weight:unset" : "") + "}"), getElementsBySelectorAndApplyCallbackOnThem("#current_health", e => e.insertAdjacentHTML("afterEnd", '<strong id="maxRecover"></strong>'));
                             var e = document.getElementById("maxRecover");
                             setInterval(() => e.textContent = food_remaining, 200)
@@ -585,7 +590,7 @@
                                         var n = t.status && t.message;
                                         if (humanMsg.displayMsg(n ? "Success!" : "captcha" == t.message ? "Captcha - try to work on the companies page" : "Error: " + t.message), n) {
                                             var i = e.querySelector("span");
-                                            i.textContent = +i.textContent - 24, +i.textContent < 1 ? e.remove() : e.removeAttribute("id"), globalNS.updateCurrency(LOCAL_CIITIZEN_DATA.currencyAmount + t.result.netSalary), energy.modifyHealth(globalNS.userInfo.wellness - 10), localStorageSettings.xpLeft || (LOCAL_CIITIZEN_DATA.currentExperiencePoints += 2, v())
+                                            i.textContent = +i.textContent - 24, +i.textContent < 1 ? e.remove() : e.removeAttribute("id"), globalNS.updateCurrency(LOCAL_CIITIZEN_DATA.currencyAmount + t.result.netSalary), energy.modifyHealth(globalNS.userInfo.wellness - 10), localStorageSettings.xpLeft || (LOCAL_CIITIZEN_DATA.currentExperiencePoints += 2, recalculateXpLeftToLevelUpAndUpdateFrontentDisplay())
                                         }
                                     });
                                     else {
