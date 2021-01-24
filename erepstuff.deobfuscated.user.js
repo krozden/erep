@@ -1094,34 +1094,44 @@
                                     any: () => 0
                                 };
                                 if (setTimeout(() => location.href = "/" + PLATFORM_LANGUAGE_CODE + "/military/campaigns", 60 * (ACTIVE_BATTLE_ID ? 15 : 5) * 1e3), top.lastCheck = Date.now(), IS_MILITARY_CAMPAIGNS_PAGE) {
-                                    var s = globalNS.userInfo.wellness + food_remaining;
-                                    LOCAL_CIITIZEN_DATA.dailyTasksDone && !LOCAL_CIITIZEN_DATA.hasReward && fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/daily-tasks-reward", {
+                                    var availableEnergy = globalNS.userInfo.wellness + food_remaining;
+                                    LOCAL_CIITIZEN_DATA.dailyTasksDone && !LOCAL_CIITIZEN_DATA.hasReward &&
+                                    fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/daily-tasks-reward", {
                                         _token: csrfToken
-                                    }), getSettingValue("collectWcRewards") && localStorage.afKills && fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/weekly-challenge-collect-all", {
+                                    }),
+                                    getSettingValue("collectWcRewards") && localStorage.afKills &&
+                                    fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/weekly-challenge-collect-all", {
                                         _token: csrfToken
-                                    }), localStorage.removeItem("afKills"), LOCAL_CIITIZEN_DATA.dailyOrderDone && !LOCAL_CIITIZEN_DATA.hasDailyOrderReward && fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/military/group-missions", {
+                                    }),
+                                        localStorage.removeItem("afKills"),
+                                    LOCAL_CIITIZEN_DATA.dailyOrderDone && !LOCAL_CIITIZEN_DATA.hasDailyOrderReward &&
+                                    fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/military/group-missions", {
                                         action: "check",
                                         _token: csrfToken
                                     });
-                                    var c = parseInt(document.getElementById("live_time").textContent);
-                                    if (s > 50 && Math.abs((localStorage.workTrainLastAttempt || -9) - c) > 1) {
-                                        var d = getSettingValue("work"),
-                                            p = getSettingValue("workOvertime");
-                                        localStorage.workTrainLastAttempt = c.toString(), !LOCAL_CIITIZEN_DATA.dailyTasksDone && getSettingValue("train") && (fetchUrlAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/training-grounds-json", function (e) {
-                                            var t = {
+                                    var currentHour = parseInt(document.getElementById("live_time").textContent);
+                                    if (availableEnergy > 50 && Math.abs((localStorage.workTrainLastAttempt || -9) - currentHour) > 1) {
+                                        var settingWork = getSettingValue("work"),
+                                            settingWorkOvertime = getSettingValue("workOvertime");
+                                        localStorage.workTrainLastAttempt = currentHour.toString(), !LOCAL_CIITIZEN_DATA.dailyTasksDone && getSettingValue("train") &&
+                                        (fetchUrlAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/training-grounds-json", function (e) {
+                                            var body = {
                                                 _token: csrfToken
                                             };
-                                            for (let n = 0; n < e.grounds.length; n++) t["grounds[" + n + "][id]"] = e.grounds[n].id, t["grounds[" + n + "][train]"] = 1;
-                                            fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/train", t)
-                                        }), s -= 40), (d || p) && (fetchUrlAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/job-data", function (e) {
-                                            d && !e.alreadyWorked ? fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/work", {
+                                            for (let n = 0; n < e.grounds.length; n++) body["grounds[" + n + "][id]"] = e.grounds[n].id, body["grounds[" + n + "][train]"] = 1;
+                                            fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/train", body)
+                                        }), availableEnergy -= 40),
+                                        (settingWork || settingWorkOvertime) &&
+                                        (fetchUrlAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/job-data", function (response) {
+                                            settingWork && !response.alreadyWorked ? fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/work", {
                                                 _token: csrfToken,
                                                 action_type: "work"
-                                            }) : p && 1e3 * e.overTime.nextOverTime - Date.now() < 0 && e.overTime.points > 23 && fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/workOvertime", {
-                                                _token: csrfToken,
-                                                action_type: "workOvertime"
-                                            })
-                                        }), s -= 10)
+                                            }) : settingWorkOvertime && 1e3 * response.overTime.nextOverTime - Date.now() < 0 && response.overTime.points > 23 &&
+                                                fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/workOvertime", {
+                                                    _token: csrfToken,
+                                                    action_type: "workOvertime"
+                                                })
+                                        }), availableEnergy -= 10)
                                     }
                                     if (getSettingValue("buyMMgold") && CURRENT_INGAME_DAY != localStorage.boughtGoldDay) fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/exchange/retrieve/", {
                                         _token: csrfToken,
@@ -1148,9 +1158,9 @@
                                             })
                                         }()
                                     });
-                                    else if ((CITIZEN_ID_ZORDACZ && 0 !== navigator.maxTouchPoints && c > 15 || !CITIZEN_ID_ZORDACZ) && X && te.length && +localStorage.getItem("wamAttempt") < Y.length + 2) {
+                                    else if ((CITIZEN_ID_ZORDACZ && 0 !== navigator.maxTouchPoints && currentHour > 15 || !CITIZEN_ID_ZORDACZ) && X && te.length && +localStorage.getItem("wamAttempt") < Y.length + 2) {
                                         var u = te.pop();
-                                        if (s >= Math.min(10 * u[1].length, 2 * reset_health_to_recover - 10)) {
+                                        if (availableEnergy >= Math.min(10 * u[1].length, 2 * reset_health_to_recover - 10)) {
                                             var f = localStorage.wamAttempt = +localStorage.getItem("wamAttempt") + 1,
                                                 g = u[1];
                                             let e = {
@@ -1183,7 +1193,7 @@
                                     } else {
                                         var h = !1,
                                             b = battleListingScope.campaigns.list;
-                                        s >= reset_health_to_recover * getSettingValue("energyRatio") && +getSettingValue("maxKills") > 0 ? i(b, K) : s > 499 && Z && K.includes("epic") && i(b, ["epic"]), !h && getSettingValue("returnToResidence") && LOCAL_CITIZEN_DATA_RESIDENCE.hasResidence && LOCAL_CIITIZEN_DATA.regionLocationId != LOCAL_CITIZEN_DATA_RESIDENCE.regionId && setTimeout(() => y(LOCAL_CITIZEN_DATA_RESIDENCE.countryId, LOCAL_CITIZEN_DATA_RESIDENCE.regionId, 0, 0, () => {
+                                        availableEnergy >= reset_health_to_recover * getSettingValue("energyRatio") && +getSettingValue("maxKills") > 0 ? i(b, K) : availableEnergy > 499 && Z && K.includes("epic") && i(b, ["epic"]), !h && getSettingValue("returnToResidence") && LOCAL_CITIZEN_DATA_RESIDENCE.hasResidence && LOCAL_CIITIZEN_DATA.regionLocationId != LOCAL_CITIZEN_DATA_RESIDENCE.regionId && setTimeout(() => y(LOCAL_CITIZEN_DATA_RESIDENCE.countryId, LOCAL_CITIZEN_DATA_RESIDENCE.regionId, 0, 0, () => {
                                         }), 3e4)
                                     }
                                 } else ACTIVE_BATTLE_ID && (SERVER_DATA.webDeployEnabled && fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/profile-update", {
