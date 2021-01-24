@@ -305,11 +305,11 @@
                             var t = e.id.split("_")[1];
                             assumption_deadFriendsList.includes(t) || assumption_deadFriendsList.push(t)
                         });
-                        removeDeadFriendsElement[0].textContent = "Scanning... " + (friendListPage / c * 100).toFixed(1) + "%";
-                        friendListPage < c ? assumption_deleteDeadFriendsFromFriendsListHandler(friendListPage + 1) : function assumption_removeDeadFriend() {
+                        removeDeadFriendsElement[0].textContent = "Scanning... " + (friendListPage / maxPageFriendsList * 100).toFixed(1) + "%";
+                        friendListPage < maxPageFriendsList ? assumption_deleteDeadFriendsFromFriendsListHandler(friendListPage + 1) : function assumption_removeDeadFriend() {
                             assumption_deadFriendsList.length ? (removeDeadFriendsElement[0].textContent = "Removing... " + assumption_deadFriendsList.length + " left",
                                 fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/citizen-friends/" + assumption_deadFriendsList.pop() + "/1/remove?_token=" + csrfToken, {}, function () {
-                                    s.textContent = s.textContent.replace(/\d+/, +s.textContent.match(/\d+/)[0] - 1);
+                                    friendsElement.textContent = friendsElement.textContent.replace(/\d+/, +friendsElement.textContent.match(/\d+/)[0] - 1);
                                     assumption_removeDeadFriend();
                                 })) : (removeDeadFriendsElement[0].textContent = "Done!", removeDeadFriendsElement[0].style.background = "#83B70B")
                         }()
@@ -327,13 +327,13 @@
                         e.style.padding = 0, e.insertAdjacentHTML("beforeEnd", '<div id="removeDead">Remove dead friends</div>')
                     });
                     var assumption_deadFriendsList = [],
-                        s = document.querySelector(".friends_title a"),
-                        c = Math.ceil(s.textContent.match(/\d+/)[0] / 20);
+                        friendsElement = document.querySelector(".friends_title a"),
+                        maxPageFriendsList = Math.ceil(friendsElement.textContent.match(/\d+/)[0] / 20);
                     getElementsBySelectorAndApplyCallbackOnThem(".view_friends", e => e.remove());
-                    var removeDeadFriendsElement = getElementsBySelectorAndApplyCallbackOnThem("#removeDead", t => t.addEventListener("click", function () {
+                    var removeDeadFriendsElement = getElementsBySelectorAndApplyCallbackOnThem("#removeDead", element => element.addEventListener("click", function () {
                         assumption_deadFriendsList = [];
                         assumption_deleteDeadFriendsFromFriendsListHandler(1);
-                        t.style.background = "#FB7E3D";
+                        element.style.background = "#FB7E3D";
                     }))
                 } else getElementsBySelectorAndApplyCallbackOnThem("#donate_to_friend div", e => e.remove())
             }
