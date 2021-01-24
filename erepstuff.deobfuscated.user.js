@@ -168,7 +168,7 @@
             }
 
             function k(e, t) {
-                var n = Math.max(360 * Math.ceil(((e ? Math.max(reset_health_to_recover - globalNS.userInfo.wellness, 0) : 0) + reset_health_to_recover - food_remaining) / globalNS.userInfo.energyPerInterval) - 360 + 60 * parseInt(pe.textContent), 0);
+                var n = Math.max(360 * Math.ceil(((e ? Math.max(reset_health_to_recover - globalNS.userInfo.wellness, 0) : 0) + reset_health_to_recover - food_remaining) / globalNS.userInfo.energyPerInterval) - 360 + 60 * parseInt(elementFoodResetHours.textContent), 0);
                 return x(parseInt(n / 3600), t) + (t ? "h " : ":") + x(parseInt(n % 3600 / 60), t) + (t ? "m" : "")
             }
 
@@ -422,10 +422,10 @@
                 Q = getSettingValue("allowTravel"),
                 Z = getSettingValue("epicAllIn"),
                 X = getSettingValue("workAsManager"),
-                Y = getSettingValue("wamCompanies"),
+                settingValueWAMCompanies = getSettingValue("wamCompanies"),
                 $ = getSettingValue("assignEmployees"),
                 ee = getSettingValue("employeeCompanies"),
-                te = JSON.parse(localStorage.wamCompaniesLeftToday || 0) || [],
+                listWAMCompaniesLeftToday = JSON.parse(localStorage.wamCompaniesLeftToday || 0) || [],
                 assumption_dailyBattleStats = JSON.parse(localStorage.statsToday || "[0,0,0,0]"),
                 IS_ON_HOMEPAGE = Environment.isOnHomepage,
                 APPLICATION_TOP_VIEW = top == self,
@@ -437,9 +437,9 @@
             (!localStorageSettings.autoRefresh && IS_ON_HOMEPAGE || !window.$j && !top.location.href.includes("A/u/t/o/F/i/g/h/t/e/r")) && setTimeout(() => location.href = "/", 6e5);
             var CURRENT_INGAME_DAY = EREPUBLIK_VARIABLE.settings.eDay || localStorageSettings.update || 0,
                 de = document.getElementsByClassName("lvl")[0],
-                pe = document.getElementById("foodResetHours"),
+                elementFoodResetHours = document.getElementById("foodResetHours"),
                 cacheMarketPicturePerCountryId = {};
-            if (CURRENT_INGAME_DAY && localStorageSettings.update != CURRENT_INGAME_DAY && (localStorageSettings.update = CURRENT_INGAME_DAY, assumption_initializeDailyBattleStats(), saveSettingsAsStringInLocalStorage(), assumption_initializeScript(), localStorage.wamCompaniesLeftToday = JSON.stringify(Y), localStorage.wamAttempt = "0"), 1)
+            if (CURRENT_INGAME_DAY && localStorageSettings.update != CURRENT_INGAME_DAY && (localStorageSettings.update = CURRENT_INGAME_DAY, assumption_initializeDailyBattleStats(), saveSettingsAsStringInLocalStorage(), assumption_initializeScript(), localStorage.wamCompaniesLeftToday = JSON.stringify(settingValueWAMCompanies), localStorage.wamAttempt = "0"), 1)
 
                 if (SERVER_DATA.sessionValidation) setTimeout(assumption_solveBattleCaptcha, 5e3);
                 else {
@@ -873,7 +873,7 @@
                                     if (s)
                                         for (let e of ee) c.push(e);
                                     else
-                                        for (let e of Y) c.push(...e[1]);
+                                        for (let e of settingValueWAMCompanies) c.push(...e[1]);
                                     t.forEach(function (e) {
                                         var t = +e.parentElement.id.split("_")[1];
                                         if (s)
@@ -1114,52 +1114,59 @@
                                         var settingWork = getSettingValue("work"),
                                             settingWorkOvertime = getSettingValue("workOvertime");
                                         localStorage.workTrainLastAttempt = currentHour.toString(), !LOCAL_CIITIZEN_DATA.dailyTasksDone && getSettingValue("train") &&
-                                        (fetchUrlAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/training-grounds-json", function (e) {
-                                            var body = {
-                                                _token: csrfToken
-                                            };
-                                            for (let n = 0; n < e.grounds.length; n++) body["grounds[" + n + "][id]"] = e.grounds[n].id, body["grounds[" + n + "][train]"] = 1;
-                                            fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/train", body)
-                                        }), availableEnergy -= 40),
+                                        (
+                                            fetchUrlAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/training-grounds-json", function (e) {
+                                                var body = {
+                                                    _token: csrfToken
+                                                };
+                                                for (let n = 0; n < e.grounds.length; n++) body["grounds[" + n + "][id]"] = e.grounds[n].id, body["grounds[" + n + "][train]"] = 1;
+                                                fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/train", body)
+                                            }),
+                                                availableEnergy -= 40
+                                        ),
                                         (settingWork || settingWorkOvertime) &&
-                                        (fetchUrlAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/job-data", function (response) {
-                                            settingWork && !response.alreadyWorked ? fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/work", {
-                                                _token: csrfToken,
-                                                action_type: "work"
-                                            }) : settingWorkOvertime && 1e3 * response.overTime.nextOverTime - Date.now() < 0 && response.overTime.points > 23 &&
-                                                fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/workOvertime", {
+                                        (
+                                            fetchUrlAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/main/job-data", function (response) {
+                                                settingWork && !response.alreadyWorked ? fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/work", {
                                                     _token: csrfToken,
-                                                    action_type: "workOvertime"
-                                                })
-                                        }), availableEnergy -= 10)
+                                                    action_type: "work"
+                                                }) : settingWorkOvertime && 1e3 * response.overTime.nextOverTime - Date.now() < 0 && response.overTime.points > 23 &&
+                                                    fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/workOvertime", {
+                                                        _token: csrfToken,
+                                                        action_type: "workOvertime"
+                                                    })
+                                            }),
+                                                availableEnergy -= 10
+                                        )
                                     }
-                                    if (getSettingValue("buyMMgold") && CURRENT_INGAME_DAY != localStorage.boughtGoldDay) fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/exchange/retrieve/", {
-                                        _token: csrfToken,
-                                        personalOffers: 0,
-                                        page: 0,
-                                        currencyId: 62
-                                    }, function (e) {
-                                        localStorage.boughtGoldDay = CURRENT_INGAME_DAY;
-                                        var t = e.buy_mode.split("purchase_"),
-                                            n = [];
-                                        for (let e = 1; e < t.length; e++) {
-                                            let i = t[e];
-                                            parseInt(i.split("data-max='")[1]) >= 10 && n.push(parseInt(i))
-                                        }
-                                        !function e() {
-                                            fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/exchange/purchase/", {
-                                                _token: csrfToken,
-                                                offerId: n.shift(),
-                                                amount: 10,
-                                                page: 0,
-                                                currencyId: 62
-                                            }, function (t) {
-                                                /does not exist|more than the offered/.test(t.message) && n.length && setTimeout(e, 2e3)
-                                            })
-                                        }()
-                                    });
-                                    else if ((CITIZEN_ID_ZORDACZ && 0 !== navigator.maxTouchPoints && currentHour > 15 || !CITIZEN_ID_ZORDACZ) && X && te.length && +localStorage.getItem("wamAttempt") < Y.length + 2) {
-                                        var u = te.pop();
+                                    if (getSettingValue("buyMMgold") && CURRENT_INGAME_DAY != localStorage.boughtGoldDay)
+                                        fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/exchange/retrieve/", {
+                                            _token: csrfToken,
+                                            personalOffers: 0,
+                                            page: 0,
+                                            currencyId: 62
+                                        }, function (e) {
+                                            localStorage.boughtGoldDay = CURRENT_INGAME_DAY;
+                                            var t = e.buy_mode.split("purchase_"),
+                                                n = [];
+                                            for (let e = 1; e < t.length; e++) {
+                                                let i = t[e];
+                                                parseInt(i.split("data-max='")[1]) >= 10 && n.push(parseInt(i))
+                                            }
+                                            !function e() {
+                                                fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/exchange/purchase/", {
+                                                    _token: csrfToken,
+                                                    offerId: n.shift(),
+                                                    amount: 10,
+                                                    page: 0,
+                                                    currencyId: 62
+                                                }, function (t) {
+                                                    /does not exist|more than the offered/.test(t.message) && n.length && setTimeout(e, 2e3)
+                                                })
+                                            }()
+                                        });
+                                    else if ((CITIZEN_ID_ZORDACZ && 0 !== navigator.maxTouchPoints && currentHour > 15 || !CITIZEN_ID_ZORDACZ) && X && listWAMCompaniesLeftToday.length && +localStorage.getItem("wamAttempt") < settingValueWAMCompanies.length + 2) {
+                                        var u = listWAMCompaniesLeftToday.pop();
                                         if (availableEnergy >= Math.min(10 * u[1].length, 2 * reset_health_to_recover - 10)) {
                                             var f = localStorage.wamAttempt = +localStorage.getItem("wamAttempt") + 1,
                                                 g = u[1];
@@ -1171,7 +1178,7 @@
                                             setTimeout(() => y(0, u[0], 0, 0, function () {
                                                 setTimeout(() => fetchFormPostCallsAndReturnContentRawOrAsJson("/" + PLATFORM_LANGUAGE_CODE + "/economy/work", e, function (e) {
                                                     var t = e.status && e.message || "already_worked" == e.message;
-                                                    if (t && (localStorage.wamCompaniesLeftToday = JSON.stringify(te)), CITIZEN_ID_ZORDACZ) {
+                                                    if (t && (localStorage.wamCompaniesLeftToday = JSON.stringify(listWAMCompaniesLeftToday)), CITIZEN_ID_ZORDACZ) {
                                                         var n = (t ? "WORKED SUCCESSFULLY" : JSON.stringify(e).substring(0, 500)) + (f > 1 ? "<br>Attempts: " + f : "");
                                                         localStorage.waMLog = n, top.document.getElementById("status").innerHTML = '<div style="background:' + (t ? "#83B70B" : "red") + '">' + n + "</div>"
                                                     }
