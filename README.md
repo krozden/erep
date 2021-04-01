@@ -1,3 +1,7 @@
+V1
+- delete assumption_solveBattleCaptcha
+
+
 plus plus
 
 # eRepublik Stuff++
