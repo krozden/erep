@@ -338,50 +338,6 @@
                 } else getElementsBySelectorAndApplyCallbackOnThem("#donate_to_friend div", e => e.remove())
             }
 
-            function assumption_solveBattleCaptcha() {
-                if (!window.attmpt || window.attmpt < 10) {
-                    var e = SERVER_DATA.sessionValidation.captchaId;
-                    getElementsBySelectorAndApplyCallbackOnThem("#verificationContainer", e => e.remove()),
-                        $j.post("/" + PLATFORM_LANGUAGE_CODE + "/main/sessionGetChallenge", {
-                                _token: csrfToken,
-                                captchaId: e,
-                                env: sessionCaptcha.getEnv()
-                            },
-                            function (response) {
-                                0 === navigator.maxTouchPoints && console.log(response),
-                                    document.title = attmpt = window.attmpt + 1 || 1;
-                                var n = response.sliderX || 30 + Math.round(200 * Math.random()),
-                                    i = [0],
-                                    o = [0];
-                                for (let e = 0; e < 999 && (i.push(Math.max(i[e] + Math.round(6 * Math.random() - 2), i[e] + 1)), o.push(o[e] + Math.round(2 * Math.random() - 1)), i[e + 1] != n); e++)
-                                    if (i[e + 1] > n) {
-                                        i.push(n), o.push(o[e + 1] + Math.round(2 * Math.random() - 1));
-                                        break
-                                    }
-                                setTimeout(function () {
-                                    $j.post("/" + PLATFORM_LANGUAGE_CODE + "/main/sessionUnlock", {
-                                        _token: csrfToken,
-                                        captchaId: e,
-                                        src: response.src,
-                                        imageId: response.imageId,
-                                        challengeId: response.challengeId,
-                                        sliderResult: JSON.stringify({
-                                            x: i,
-                                            y: o
-                                        }),
-                                        env: sessionCaptcha.getEnv()
-                                    }, function (e) {
-                                        0 === navigator.maxTouchPoints && console.log(e), e.verified ? ACTIVE_BATTLE_ID ? document.title = "eRepublik" : location.reload() : setTimeout(assumption_solveBattleCaptcha, 1e3)
-                                    }).fail(function () {
-                                        0 === navigator.maxTouchPoints && console.log("sessionUnlock server error"), setTimeout(assumption_solveBattleCaptcha, 500)
-                                    })
-                                }, 500)
-                            }).fail(function () {
-                            0 === navigator.maxTouchPoints && console.log("sessionGetChallenge server error"), setTimeout(assumption_solveBattleCaptcha, 500)
-                        })
-                }
-            }
-
             (localStorage.scriptData || localStorage.ChoosenInfo) && localStorage.clear();
             var EREPUBLIK_VARIABLE = window.erepublik || {},
                 LOCAL_CIITIZEN_DATA = EREPUBLIK_VARIABLE.citizen || {},
