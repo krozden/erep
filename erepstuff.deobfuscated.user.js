@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name		eRepublik Stuff++
 // @author		Zordacz, edited and partly deobfuscated by Master_rg
-// @version		6.1
+// @version		6.11
 // @include		https://www.erepublik.com/*
+// @exclude     https://www.erepublik.com/en/military/battlefield/*
 // @run-at		document-start
 // @grant		none
 // ==/UserScript==
