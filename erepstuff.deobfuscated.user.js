@@ -84,7 +84,7 @@
             }
 
             function assumption_initializeScript() {
-                fetchUrlAndReturnContentRawOrAsJson("//download.erepublik.tools/erepstuff/version.json", function (response) {
+                fetchUrlAndReturnContentRawOrAsJson("//github.com/krozden/erep/raw/main/version.json", function (response) {
                     Object.assign(localStorageSettings, response);
                     updateLicenceString();
                     compareScriptVersionWithExternalVersionAndShowUpdateNotification();
