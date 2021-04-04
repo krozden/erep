@@ -1,4 +1,7 @@
-V1
+4-3-2021
+add exclude     https://www.erepublik.com/en/military/battlefield/*
+
+1-3-2021
 - delete assumption_solveBattleCaptcha
 
 
