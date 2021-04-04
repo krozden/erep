@@ -1,5 +1,6 @@
 4-3-2021
 - add exclude     https://www.erepublik.com/en/military/battlefield/*
+- change update url
 
 1-3-2021
 - delete assumption_solveBattleCaptcha
