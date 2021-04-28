@@ -1,3 +1,6 @@
+29-4-2021
+-version issue
+
 4-3-2021
 - add exclude     https://www.erepublik.com/en/military/battlefield/*
 - change update url
