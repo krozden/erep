@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name		eRepublik Stuff++
 // @author		Zordacz, edited and partly deobfuscated by Master_rg
-// @version		6.12
+// @version		6.13
 // @include		https://www.erepublik.com/*
 // @exclude     https://www.erepublik.com/en/military/battlefield/*
 // @run-at		document-start
@@ -390,7 +390,7 @@
                 IS_CITIZEN_PROFILE_PAGE = location.href.includes("citizen/profile"),
                 ACTIVE_BATTLE_ID = SERVER_DATA.battleId,
                 HAS_MAVERICK = "true" == localStorage.hasMaverick;
-            localStorageSettings.version = "6.1";
+            localStorageSettings.version = "6.13";
             (!localStorageSettings.autoRefresh && IS_ON_HOMEPAGE || !window.$j && !top.location.href.includes("A/u/t/o/F/i/g/h/t/e/r")) && setTimeout(() => location.href = "/", 6e5);
             var CURRENT_INGAME_DAY = EREPUBLIK_VARIABLE.settings.eDay || localStorageSettings.update || 0,
                 de = document.getElementsByClassName("lvl")[0],
