@@ -1,3 +1,7 @@
+28-5-2021
+- remove auto eat
+- remove xp left
+
 29-4-2021
 - version issue
 
