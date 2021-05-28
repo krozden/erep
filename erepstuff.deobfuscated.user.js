@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name		eRepublik Stuff++
 // @author		Zordacz, edited and partly deobfuscated by Master_rg
-// @version		6.14
+// @version		6.15
 // @include		https://www.erepublik.com/*
 // @exclude     https://www.erepublik.com/en/military/battlefield/*
 // @run-at		document-start
@@ -175,6 +175,10 @@
 
             function _(e) {
                 return "<span class='stuffTipsySpan'>" + e + "</span><br>"
+            }
+            
+            function E() {
+                return Math.min(reset_health_to_recover - globalNS.userInfo.wellness, food_remaining) >= smallestFood.use
             }
 
             function assumption_getAmountOfAvailableEnergyFromFoodInInventory(e) {
@@ -386,7 +390,7 @@
                 IS_CITIZEN_PROFILE_PAGE = location.href.includes("citizen/profile"),
                 ACTIVE_BATTLE_ID = SERVER_DATA.battleId,
                 HAS_MAVERICK = "true" == localStorage.hasMaverick;
-            localStorageSettings.version = "6.14";
+            localStorageSettings.version = "6.15";
             (!localStorageSettings.autoRefresh && IS_ON_HOMEPAGE || !window.$j && !top.location.href.includes("A/u/t/o/F/i/g/h/t/e/r")) && setTimeout(() => location.href = "/", 6e5);
             var CURRENT_INGAME_DAY = EREPUBLIK_VARIABLE.settings.eDay || localStorageSettings.update || 0,
                 de = document.getElementsByClassName("lvl")[0],
