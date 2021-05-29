@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name		eRepublik Stuff++
 // @author		Zordacz, edited and partly deobfuscated by Master_rg
-// @version		6.15
+// @version		6.16
 // @include		https://www.erepublik.com/*
 // @exclude     https://www.erepublik.com/en/military/battlefield/*
 // @run-at		document-start
@@ -176,7 +176,7 @@
             function _(e) {
                 return "<span class='stuffTipsySpan'>" + e + "</span><br>"
             }
-            
+
             function E() {
                 return Math.min(reset_health_to_recover - globalNS.userInfo.wellness, food_remaining) >= smallestFood.use
             }
@@ -390,7 +390,7 @@
                 IS_CITIZEN_PROFILE_PAGE = location.href.includes("citizen/profile"),
                 ACTIVE_BATTLE_ID = SERVER_DATA.battleId,
                 HAS_MAVERICK = "true" == localStorage.hasMaverick;
-            localStorageSettings.version = "6.15";
+            localStorageSettings.version = "6.16";
             (!localStorageSettings.autoRefresh && IS_ON_HOMEPAGE || !window.$j && !top.location.href.includes("A/u/t/o/F/i/g/h/t/e/r")) && setTimeout(() => location.href = "/", 6e5);
             var CURRENT_INGAME_DAY = EREPUBLIK_VARIABLE.settings.eDay || localStorageSettings.update || 0,
                 de = document.getElementsByClassName("lvl")[0],
@@ -473,7 +473,7 @@
                             }), getElementsBySelectorAndApplyCallbackOnThem("#DailyConsumtionTrigger", e => e.style.display = "none")), getElementsBySelectorAndApplyCallbackOnThem("#fight_btn", t => t.addEventListener("click", function () {
                                 clearInterval(a), a = setInterval(e, 3e3)
                             }))
-                        }(), localStorageSettings.xpLeft || (insertCSSStyles("#xpleft{font-size:10px;top:" + (de ? "32px;right:769px;position:absolute" : "14px;color:#777;float:right;position:relative") + "}#xpleft span{padding:1px;color:#fff;border-radius:2px}"), getElementsBySelectorAndApplyCallbackOnThem(de ? ".profileDetails" : ".user_level", e => e.insertAdjacentHTML("beforeEnd", '<!-- xp -->')), de && (getElementsBySelectorAndApplyCallbackOnThem("#DailyConsumtionTrigger", e => e.style.visibility = "hidden"), getElementsBySelectorAndApplyCallbackOnThem(".energyTooltip", e => e.style.top = "42px"), de.style.top = "30px"), recalculateXpLeftToLevelUpAndUpdateFrontentDisplay()), localStorageSettings.maxEnergy || function () {
+                        }(), localStorageSettings.xpLeft || (insertCSSStyles("#xpleft{font-size:10px;top:" + (de ? "32px;position:absolute" : "14px;color:#777;float:right;position:relative") + "}#xpleft span{padding:1px;color:#fff;border-radius:2px}"), getElementsBySelectorAndApplyCallbackOnThem(de ? ".erpk_time" : ".user_level", e => e.insertAdjacentHTML("beforeEnd", '<div id="xpleft">XP left: <span></span></div>')), de && (getElementsBySelectorAndApplyCallbackOnThem("#DailyConsumtionTrigger", e => e.style.visibility = "hidden"), getElementsBySelectorAndApplyCallbackOnThem(".energyTooltip", e => e.style.top = "42px"), de.style.top = "30px"), recalculateXpLeftToLevelUpAndUpdateFrontentDisplay()), localStorageSettings.maxEnergy || function () {
                             insertCSSStyles(".health_bar strong#maxRecover{line-height:14px;text-align:right;background:none;float:right;right:2px;" + (de ? "position:absolute;z-index:4;font-size:9px;text-shadow:0 0 5px rgba(0,0,0,.85);font-weight:unset" : "") + "}"), getElementsBySelectorAndApplyCallbackOnThem("#current_health", e => e.insertAdjacentHTML("afterEnd", '<strong id="maxRecover"></strong>'));
                             var e = document.getElementById("maxRecover");
                             setInterval(() => e.textContent = food_remaining, 200)
