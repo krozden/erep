@@ -1,3 +1,6 @@
+29-5-2021
+- add xp left
+
 28-5-2021
 - remove auto eat
 - remove xp left
